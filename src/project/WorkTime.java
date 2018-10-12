@@ -38,6 +38,8 @@ public class WorkTime {
     /**
      * TODO переделать методы так, чтобы обычные геттеры отдавали int,
      * а для double сделать версии типа getTimeDouble()
+     *
+     * ???
      * */
 
     @XmlElement(name = "datestring")

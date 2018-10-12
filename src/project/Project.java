@@ -15,7 +15,7 @@ import java.util.Objects;
 public class Project {
 
     /** TODO При восстановлении idNumber будет восстанавливаться, не надо ли убрать final?  */
-    private final int idNumber;
+    private int idNumber;
     private String initiator;
     private String description;
     private volatile boolean isArchive = false;
@@ -38,6 +38,10 @@ public class Project {
     @XmlElement(name = "projectidnumber")
     public int getIdNumber() {
         return idNumber;
+    }
+
+    public void setIdNumber(int idNumber) {
+        this.idNumber = idNumber;
     }
 
     @XmlElement(name = "initby")
@@ -85,7 +89,7 @@ public class Project {
         return AllData.intToDouble(workSum);
     }*/
 
-    private void setWorkSum(int newWorkSum) {
+    private void setWorkSumInt(int newWorkSum) {
         this.workSum = newWorkSum >= 0 ? newWorkSum : 0;
     }
 
@@ -106,7 +110,7 @@ public class Project {
                 // сначала правим суммарное рабочее время всего проекта
                 int diff = AllData.doubleToInt(newTime) - wt.getTimeInt();
                 int newWorkSumInt = getWorkSumInt() + diff;
-                setWorkSum(newWorkSumInt);
+                setWorkSumInt(newWorkSumInt);
 
                 /** теперь вносим время в список рабочего времени **/
                 wt.setTime(newTime);
@@ -116,7 +120,7 @@ public class Project {
 
         /** Создаем новый экземпляр WorkTime и кладем в список **/
         int newWorkSumInt = getWorkSumInt() + AllData.doubleToInt(newTime);
-        setWorkSum(newWorkSumInt);
+        setWorkSumInt(newWorkSumInt);
         work.add(new WorkTime(newDate, idUser, newTime));
     }
 
