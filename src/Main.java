@@ -1,5 +1,6 @@
 import project.AllData;
 import project.Project;
+import project.ProjectListWrapper;
 import threads.ParallelExecutor;
 import threads.ThreadCreateProject;
 import threads.ThreadCreateUser;
@@ -9,6 +10,10 @@ import user.Manager;
 import user.User;
 import threads.ParallelExecutor;
 
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.Marshaller;
+import javax.xml.bind.Unmarshaller;
+import java.io.File;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDate;
@@ -17,18 +22,9 @@ import java.util.concurrent.Future;
 
 public class Main {
 
-    public static void main(String[] args) {
-        /*BigDecimal oldSum = new BigDecimal(5.0);
-        BigDecimal addSum = new BigDecimal(3.0);
-        BigDecimal newSum = oldSum.add(addSum);
-        System.out.println(newSum);*/
+    public static void main(String[] args) throws Exception {
 
-        /*LocalDate a = LocalDate.of(2014, 6, 30);
-        LocalDate b = LocalDate.of(2014, 6, 30);
-        System.out.println(a.equals(b));*/
-
-
-        Designer gosha = new Designer("Gosha");
+        /*Designer gosha = new Designer("Gosha");
         Designer evva = new Designer("Evvlampia");
         Designer roma = new Designer("ROMA");
         AllUsers.addUser(gosha);
@@ -85,8 +81,47 @@ public class Main {
         System.out.println(AllUsers.getOneUser("designer"));
         System.out.println(AllData.getAnyProject(np.getIdNumber()));
 
+        ParallelExecutor.getService().shutdown();*/
 
-        ParallelExecutor.getService().shutdown();
+
+        Designer gosha = new Designer("Gosha");
+        Designer evva = new Designer("Evvlampia");
+        Designer roma = new Designer("ROMA");
+        AllUsers.addUser(gosha);
+        AllUsers.addUser(evva);
+        AllUsers.addUser(roma);
+
+        Project p = new Project("Manager", "Very important project");
+        p.addWorkTime(LocalDate.now(), gosha.getIDNumber(), 5.2);
+        p.addWorkTime(LocalDate.of(2017, 5, 6), evva.getIDNumber(), 2.6);
+        p.addWorkTime(LocalDate.of(2017, 5, 6), evva.getIDNumber(), 1.4);
+
+        Project p2 = new Project("Junior", "Not important project");
+        p2.addWorkTime(LocalDate.of(2018, 7, 22), roma.getIDNumber(), 3.3);
+
+        AllData.addNewProject(p);
+        AllData.addNewProject(p2);
+
+
+        File file = new File("/_jToys/TCProbe01.xml");
+
+        ProjectListWrapper plw = new ProjectListWrapper();
+
+        System.out.println(plw.getAllProjects());
+        System.out.println("");
+
+        JAXBContext context = JAXBContext.newInstance(ProjectListWrapper.class);
+        Marshaller marshaller = context.createMarshaller();
+        marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
+        marshaller.marshal(plw, file);
+
+        Unmarshaller unmarshaller = context.createUnmarshaller();
+        ProjectListWrapper plw2 = (ProjectListWrapper) unmarshaller.unmarshal(file);
+
+        System.out.println(plw2.getAllProjects());
+
+
+
 
     }
 }

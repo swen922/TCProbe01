@@ -2,6 +2,8 @@ package project;
 
 import user.Designer;
 
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDate;
@@ -9,6 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+@XmlRootElement(name = "project")
 public class Project {
 
     /** TODO При восстановлении idNumber будет восстанавливаться, не надо ли убрать final?  */
@@ -26,10 +29,18 @@ public class Project {
         this.description = description;
     }
 
+    public Project() {
+        this.idNumber = 0;
+        this.initiator = "";
+        this.description = "";
+    }
+
+    @XmlElement(name = "projectidnumber")
     public int getIdNumber() {
         return idNumber;
     }
 
+    @XmlElement(name = "initby")
     public String getInitiator() {
         return initiator;
     }
@@ -38,6 +49,7 @@ public class Project {
         this.initiator = initiator;
     }
 
+    @XmlElement(name = "descr")
     public String getDescription() {
         return description;
     }
@@ -46,6 +58,7 @@ public class Project {
         this.description = description;
     }
 
+    @XmlElement(name = "isarchive")
     public boolean isArchive() {
         return isArchive;
     }
@@ -54,6 +67,7 @@ public class Project {
         isArchive = archive;
     }
 
+    @XmlElement(name = "cmmnt")
     public String getComment() {
         return comment;
     }
@@ -62,18 +76,20 @@ public class Project {
         this.comment = comment;
     }
 
+    @XmlElement(name = "worksumint")
     private int getWorkSumInt() {
         return workSum;
     }
 
-    public double getWorkSum() {
+    /*public double getWorkSum() {
         return AllData.intToDouble(workSum);
-    }
+    }*/
 
     private void setWorkSum(int newWorkSum) {
         this.workSum = newWorkSum >= 0 ? newWorkSum : 0;
     }
 
+    @XmlElement(name = "listworks")
     public List<WorkTime> getWork() {
         return work;
     }
@@ -86,7 +102,7 @@ public class Project {
 
         for (WorkTime wt : work) {
             /** Проверяем наличие такого дня + дизайнера **/
-            if ((wt.getDate().equals(newDate)) && (wt.getDesignerID() == idUser)) {
+            if ((AllData.parseDate(wt.getDateSting()).equals(newDate)) && (wt.getDesignerID() == idUser)) {
                 // сначала правим суммарное рабочее время всего проекта
                 int diff = AllData.doubleToInt(newTime) - wt.getTimeInt();
                 int newWorkSumInt = getWorkSumInt() + diff;
@@ -103,6 +119,7 @@ public class Project {
         setWorkSum(newWorkSumInt);
         work.add(new WorkTime(newDate, idUser, newTime));
     }
+
 
     /** Используем только ID-номер проекта для equals,
      *  потому что остальные поля могут измениться **/
