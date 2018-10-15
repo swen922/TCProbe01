@@ -1,7 +1,10 @@
 package user;
 
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
 import java.util.Objects;
 
+@XmlRootElement(name = "manager")
 public class Manager implements User {
     private final int IDNumber;
     private String nameLogin;
@@ -9,38 +12,40 @@ public class Manager implements User {
     private String email;
 
     public Manager(String nameLogin) {
-        this.IDNumber = IDCounter.incrementIdNumberAndGet();
+        this.IDNumber = AllUsers.incrementIdNumberAndGet();
         this.nameLogin = nameLogin.toLowerCase();
     }
 
-    @Override
+    @XmlElement(name = "manageridnumber")
     public int getIDNumber() {
         return IDNumber;
     }
 
-    @Override
+    @XmlElement(name = "managernamelogin")
     public String getNameLogin() {
         return nameLogin;
     }
 
-    public void setNameLogin(String nameLogin) {
-        this.nameLogin = nameLogin;
+    public void setNameLogin(String newNameLogin) {
+        this.nameLogin = newNameLogin;
     }
 
+    @XmlElement(name = "managerfullname")
     public String getFullName() {
         return fullName;
     }
 
-    public void setFullName(String fullName) {
-        this.fullName = fullName;
+    public void setFullName(String newFullName) {
+        this.fullName = newFullName;
     }
 
+    @XmlElement(name = "manageremail")
     public String getEmail() {
         return email;
     }
 
-    public void setEmail(String email) {
-        this.email = email;
+    public void setEmail(String newEmail) {
+        this.email = newEmail;
     }
 
     @Override

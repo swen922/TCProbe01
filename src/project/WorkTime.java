@@ -23,7 +23,7 @@ public class WorkTime {
     public WorkTime(LocalDate date, int ID, double time) {
         this.dateString = AllData.formatDate(date);
         this.designerID = ID;
-        setTimeInt(AllData.doubleToInt(time));
+        setTime(AllData.doubleToInt(time));
     }
 
     public WorkTime() {
@@ -35,21 +35,19 @@ public class WorkTime {
         return AllData.parseDate(this.dateString);
     }*/
 
-    /**
-     * TODO переделать методы так, чтобы обычные геттеры отдавали int,
-     * а для double сделать версии типа getTimeDouble()
-     *
-     * ???
-     * */
 
     @XmlElement(name = "datestring")
     public String getDateSting() {
         return dateString;
     }
 
-    /*public void setDate(LocalDate date) {
-        this.dateString = AllData.formatDate(date);
-    }*/
+    public LocalDate getDate() {
+        return AllData.parseDate(this.dateString);
+    }
+
+    public void setDate(String date) {
+        this.dateString = date;
+    }
 
     @XmlElement(name = "designerid")
     public int getDesignerID() {
@@ -61,24 +59,24 @@ public class WorkTime {
     }
 
     @XmlElement(name = "time")
-    public int getTimeInt() {
+    public int getTime() {
         return this.time;
     }
 
-    /*public double getTime() {
+    public double getTimeDouble() {
         return AllData.intToDouble(time);
-    }*/
+    }
 
-    private void setTimeInt(int newTime) {
+    public void setTime(int newTime) {
         this.time = newTime >= 0 ? newTime : 0;
     }
 
-    public void setTime(double newTime) {
-        if (newTime == 0) {
-            setTimeInt(0);
+    public void setTimeDouble(double newTimeDouble) {
+        if (newTimeDouble == 0) {
+            setTime(0);
         }
         else {
-            setTimeInt(AllData.doubleToInt(newTime));
+            setTime(AllData.doubleToInt(newTimeDouble));
         }
     }
 
@@ -103,7 +101,7 @@ public class WorkTime {
         return "WorkTime{" +
                 "date=" + dateString +
                 ", designerID=" + designerID +
-                ", time=" + time +
+                ", time=" + AllData.intToDouble(time) +
                 '}';
     }
 }

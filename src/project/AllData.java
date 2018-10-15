@@ -14,36 +14,53 @@ public class AllData {
 
     private static volatile AtomicInteger idNumber = new AtomicInteger(0);
 
-    /*private List<Project> activeProjects = new CopyOnWriteArrayList<>();
-    private List<Project> allProjects = new CopyOnWriteArrayList<>();*/
-
     private static Map<Integer, Project> activeProjects = new ConcurrentHashMap<>();
 
     private static Map<Integer, Project> allProjects = new ConcurrentHashMap<>();
+
+    private static volatile AtomicInteger workSumProjects = new AtomicInteger(0);
 
 
 
     /** Стандартные геттеры и сеттеры */
 
+    public static int incrementIdNumberAndGet() {
+        return idNumber.incrementAndGet();
+
+    }
+
     public static int getIdNumber() {
         return idNumber.get();
+    }
+
+    public static void setIdNumber(int newIdNumber) {
+        idNumber.set(newIdNumber);
     }
 
     public static Map<Integer, Project> getActiveProjects() {
         return activeProjects;
     }
 
-    public static synchronized void setActiveProjects(Map<Integer, Project> activeProjects) {
-        AllData.activeProjects = activeProjects;
+    public static synchronized void setActiveProjects(Map<Integer, Project> newActiveProjects) {
+        AllData.activeProjects = newActiveProjects;
     }
 
     public static Map<Integer, Project> getAllProjects() {
         return allProjects;
     }
 
-    public static synchronized void setAllProjects(Map<Integer, Project> allProjects) {
-        AllData.allProjects = allProjects;
+    public static synchronized void setAllProjects(Map<Integer, Project> newAllProjects) {
+        AllData.allProjects = newAllProjects;
     }
+
+    public static int getWorkSumProjects() {
+        return workSumProjects.get();
+    }
+
+    public static void setWorkSumProjects(int newWorkSumProjects) {
+        AllData.workSumProjects.set(newWorkSumProjects);
+    }
+
 
 
     /** Геттеры активного, неактивного и любого проекта из мапы
@@ -79,6 +96,12 @@ public class AllData {
         if (!isProjectExist(newProject.getIdNumber())) {
             allProjects.put(newProject.getIdNumber(), newProject);
             activeProjects.put(newProject.getIdNumber(), newProject);
+
+            // Добавляем время в общее суммарное
+            int tmp = workSumProjects.get();
+            tmp += newProject.getWorkSum();
+            workSumProjects.set(tmp);
+
             return true;
         }
         return false;
@@ -88,6 +111,15 @@ public class AllData {
         if (isProjectExist(deadProject)) {
             allProjects.remove(deadProject);
             activeProjects.remove(deadProject);
+
+            // Удаляем время из общего суммарного
+            int tmp = workSumProjects.get();
+            tmp -= allProjects.get(deadProject).getWorkSum();
+            if (tmp < 0) {
+                tmp = 0;
+            }
+            workSumProjects.set(tmp);
+
             return true;
         }
         return false;
@@ -140,7 +172,7 @@ public class AllData {
 
 
 
-    /** Метод сверки и синхронизации двух списков */
+    /** Метод сверки и синхронизации списков и поля суммарного времени */
     private static synchronized void syncProjects() {
         Map<Integer, Project> newActiveProjects = new HashMap<>();
         allProjects.forEach((k,v)-> {
@@ -152,14 +184,20 @@ public class AllData {
         activeProjects.putAll(newActiveProjects);
     }
 
+    public static synchronized int computeWorkSum() {
+        int result = 0;
+
+        Collection<Project> values = allProjects.values();
+        for (Project p : values) {
+            result += p.getWorkSum();
+        }
+        workSumProjects.set(result);
+        return result;
+    }
+
 
 
     /** методы-утилиты */
-
-    public static int incrementIdNumberAndGet() {
-        return idNumber.incrementAndGet();
-
-    }
 
     public static int doubleToInt(double argument) {
         return (int) (argument * 10);
@@ -173,7 +211,7 @@ public class AllData {
     }
 
     /** Форматировщик даты. */
-    private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("d.M.yyyy");
+    private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("yyyy.M.d");
 
     public static String formatDate(LocalDate date) {
         if (date == null) {

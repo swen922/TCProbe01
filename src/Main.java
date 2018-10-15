@@ -1,6 +1,6 @@
 import project.AllData;
+import project.AllDataWrapper;
 import project.Project;
-import project.ProjectListWrapper;
 import threads.ParallelExecutor;
 import threads.ThreadCreateProject;
 import threads.ThreadCreateUser;
@@ -84,15 +84,15 @@ public class Main {
         ParallelExecutor.getService().shutdown();*/
 
 
-        Designer gosha = new Designer("Gosha");
+        Designer kesha = new Designer("Kesha");
         Designer evva = new Designer("Evvlampia");
         Designer roma = new Designer("ROMA");
-        AllUsers.addUser(gosha);
+        AllUsers.addUser(kesha);
         AllUsers.addUser(evva);
         AllUsers.addUser(roma);
 
         Project p = new Project("Manager", "Very important project");
-        p.addWorkTime(LocalDate.now(), gosha.getIDNumber(), 5.2);
+        p.addWorkTime(LocalDate.now(), kesha.getIDNumber(), 5.2);
         p.addWorkTime(LocalDate.of(2017, 5, 6), evva.getIDNumber(), 2.6);
         p.addWorkTime(LocalDate.of(2017, 5, 6), evva.getIDNumber(), 1.4);
 
@@ -105,20 +105,20 @@ public class Main {
 
         File file = new File("/_jToys/TCProbe01.xml");
 
-        ProjectListWrapper plw = new ProjectListWrapper();
+        AllDataWrapper adw = new AllDataWrapper();
 
-        System.out.println(plw.getAllProjects());
+        System.out.println(adw);
         System.out.println("");
 
-        JAXBContext context = JAXBContext.newInstance(ProjectListWrapper.class);
+        JAXBContext context = JAXBContext.newInstance(AllDataWrapper.class);
         Marshaller marshaller = context.createMarshaller();
         marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
-        marshaller.marshal(plw, file);
+        marshaller.marshal(adw, file);
 
         Unmarshaller unmarshaller = context.createUnmarshaller();
-        ProjectListWrapper plw2 = (ProjectListWrapper) unmarshaller.unmarshal(file);
+        AllDataWrapper adw2 = (AllDataWrapper) unmarshaller.unmarshal(file);
 
-        System.out.println(plw2.getAllProjects());
+        System.out.println(adw2);
 
 
 

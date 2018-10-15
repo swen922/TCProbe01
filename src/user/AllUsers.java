@@ -1,14 +1,29 @@
 package user;
 
+import project.AllData;
+
 import java.util.Collection;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class AllUsers {
 
+    private static volatile AtomicInteger IDCounterAllUsers = new AtomicInteger(0);
+
     private static Map<Integer, User> users = new ConcurrentHashMap<>();
 
+
+
     /** Стандартные геттеры и сеттеры */
+
+    public static int getIDCounterAllUsers() {
+        return IDCounterAllUsers.get();
+    }
+
+    public static int incrementIdNumberAndGet() {
+        return IDCounterAllUsers.incrementAndGet();
+    }
 
     public static Map<Integer, User> getUsers() {
         return users;
@@ -68,7 +83,7 @@ public class AllUsers {
      * * с данным ID и nameLogin
      */
     public static boolean isUserExist(int idNumber) {
-        if (idNumber <= 0 || idNumber > IDCounter.getIDCounterAllUsers()) {
+        if (idNumber <= 0 || idNumber > getIDCounterAllUsers()) {
             return false;
         }
         return users.containsKey(idNumber);
