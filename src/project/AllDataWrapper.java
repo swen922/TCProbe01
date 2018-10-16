@@ -1,11 +1,12 @@
 package project;
 
-import user.AllUsers;
-import user.User;
+import user.*;
 
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @XmlRootElement(name = "alldatawrapper")
@@ -18,7 +19,10 @@ public class AllDataWrapper {
 
     //поля класса AllUsers
     private int IDCounterAllUsers;
-    private Map<Integer, User> users = new HashMap<>();
+    private Map<Integer, Designer> designers = new HashMap<>();
+    private Map<Integer, Manager> managers = new HashMap<>();
+    //private Map<Integer, User> users = new HashMap<>();
+
 
 
     public AllDataWrapper() {
@@ -27,7 +31,18 @@ public class AllDataWrapper {
         this.workSumProjects = AllData.getWorkSumProjects();
 
         this.IDCounterAllUsers = AllUsers.getIDCounterAllUsers();
-        this.users = AllUsers.getUsers();
+
+        Collection<? extends User> collUsers = AllUsers.getUsers().values();
+        for (User u : collUsers) {
+            if (u.getRole().equals(Role.DESIGNER)) {
+                Designer des = (Designer) u;
+                this.designers.put(des.getIDNumber(), des);
+            }
+            else if (u.getRole().equals(Role.MANAGER)) {
+                Manager man = (Manager) u;
+                this.managers.put(man.getIDNumber(), man);
+            }
+        }
     }
 
     @XmlElement(name = "projectidnumber")
@@ -66,14 +81,32 @@ public class AllDataWrapper {
         this.IDCounterAllUsers = newIDCounterAllUsers;
     }
 
-    @XmlElement(name = "allusers")
+    @XmlElement(name = "usersdesigners")
+    public Map<Integer, Designer> getDesigners() {
+        return designers;
+    }
+
+    public void setDesigners(Map<Integer, Designer> newdesigners) {
+        this.designers = newdesigners;
+    }
+
+    @XmlElement(name = "usersmanagers")
+    public Map<Integer, Manager> getManagers() {
+        return managers;
+    }
+
+    public void setManagers(Map<Integer, Manager> newmanagers) {
+        this.managers = newmanagers;
+    }
+
+    /*@XmlElement(name = "allusers")
     public Map<Integer, User> getUsers() {
         return users;
     }
 
     public void setUsers(Map<Integer, User> newusers) {
         this.users = newusers;
-    }
+    }*/
 
     @Override
     public String toString() {
@@ -82,7 +115,8 @@ public class AllDataWrapper {
                 ", allProjects=" + allProjects + "\n" +
                 ", workSumProjects=" + workSumProjects + "\n" +
                 ", IDCounterAllUsers=" + IDCounterAllUsers + "\n" +
-                ", users=" + users + "\n" +
+                ", designers=" + designers + "\n" +
+                ", managers=" + managers + "\n" +
                 '}' + "\n";
     }
 }

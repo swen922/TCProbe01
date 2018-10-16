@@ -21,6 +21,10 @@ public class AllUsers {
         return IDCounterAllUsers.get();
     }
 
+    public static void setIDCounterAllUsers(int newIDCounterAllUsers) {
+        AllUsers.IDCounterAllUsers.set(newIDCounterAllUsers);
+    }
+
     public static int incrementIdNumberAndGet() {
         return IDCounterAllUsers.incrementAndGet();
     }

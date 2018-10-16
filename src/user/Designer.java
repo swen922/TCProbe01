@@ -6,14 +6,20 @@ import java.util.Objects;
 
 @XmlRootElement(name = "designer")
 public class Designer implements User {
-    private final int IDNumber;
+    private int IDNumber = 0;
     private String nameLogin;
+    private Role role;
     private String fullName;
     private String email;
+
 
     public Designer(String nameLogin) {
         this.IDNumber = AllUsers.incrementIdNumberAndGet();
         this.nameLogin = nameLogin.toLowerCase();
+        this.role = Role.DESIGNER;
+    }
+
+    public Designer() {
     }
 
     @XmlElement(name = "designeridnumber")
@@ -28,6 +34,15 @@ public class Designer implements User {
 
     public void setNameLogin(String newNameLogin) {
         this.nameLogin = newNameLogin;
+    }
+
+    @XmlElement(name = "designerrole")
+    public Role getRole() {
+        return role;
+    }
+
+    public void setRole(Role newrole) {
+        this.role = newrole;
     }
 
     @XmlElement(name = "designerfullname")
@@ -47,6 +62,8 @@ public class Designer implements User {
     public void setEmail(String newEmail) {
         this.email = newEmail;
     }
+
+
 
     /** Используем только ID-номер дизайнера для equals,
      * потому что остальные поля могут измениться **/
@@ -70,8 +87,9 @@ public class Designer implements User {
         return "Designer{" +
                 "IDNumber=" + IDNumber +
                 ", nameLogin='" + nameLogin + '\'' +
+                ", role=" + role +
                 ", fullName='" + fullName + '\'' +
-                '}';
+                '}' + "\n";
     }
 }
 

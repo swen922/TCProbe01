@@ -6,14 +6,19 @@ import java.util.Objects;
 
 @XmlRootElement(name = "manager")
 public class Manager implements User {
-    private final int IDNumber;
+    private int IDNumber = 0;
     private String nameLogin;
+    private Role role;
     private String fullName;
     private String email;
 
     public Manager(String nameLogin) {
         this.IDNumber = AllUsers.incrementIdNumberAndGet();
         this.nameLogin = nameLogin.toLowerCase();
+        this.role = Role.MANAGER;
+    }
+
+    public Manager() {
     }
 
     @XmlElement(name = "manageridnumber")
@@ -28,6 +33,15 @@ public class Manager implements User {
 
     public void setNameLogin(String newNameLogin) {
         this.nameLogin = newNameLogin;
+    }
+
+    @XmlElement(name = "managerrole")
+    public Role getRole() {
+        return role;
+    }
+
+    public void setRole(Role newrole) {
+        this.role = newrole;
     }
 
     @XmlElement(name = "managerfullname")

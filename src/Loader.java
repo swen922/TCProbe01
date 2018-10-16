@@ -1,96 +1,91 @@
 import javafx.scene.control.Alert;
 import project.AllData;
 import project.AllDataWrapper;
+import user.AllUsers;
+import user.User;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
+import javax.xml.bind.Unmarshaller;
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.prefs.Preferences;
 
 public class Loader {
 
-    private File file;
-    private String meUser = System.getProperty("user.name");
-    private volatile String standartFilePath = "/Users/" + meUser + "/Library/Application Support/TimeCountProbe/tcprobe.xml";
-    private volatile String filePath;
+    private final String meUser = System.getProperty("user.name");
+    private final String pathString = "/Users/" + meUser + "/Library/Application Support/TimeCountProbe/tcprobe.xml";
+    private File file = new File(pathString);
 
-
-
-    public Loader() {
-        Preferences prefs = Preferences.userNodeForPackage(Main.class);
-        this.filePath = prefs.get("filePath", null);
-        if (this.filePath == null) {
-            this.file = new File(this.standartFilePath);
-        }
-        else {
-            this.file = new File(filePath);
-        }
-
+    public File getFile() {
+        return file;
     }
 
-    public String getFilePath() {
-        return filePath;
-    }
-
-    public void setFilePath(String newFilePath) {
-        this.filePath = newFilePath;
-    }
-
-    public void setAllDataFilePath() {
-        Preferences prefs = Preferences.userNodeForPackage(Main.class);
-        prefs.put("filePath", getFilePath());
-    }
-
-    public void setAllDataFilePath(File file) {
-        Preferences prefs = Preferences.userNodeForPackage(Main.class);
-        if (file != null) {
-            prefs.put("filePath", file.getPath());
-            setFilePath(file.getPath());
-        }
-        else {
-            prefs.put("filePath", getFilePath());
-        }
-        /*System.out.println(prefs.toString() + "\n" + prefs.absolutePath() + "\n");
-        System.out.println(prefs.get("filePath", "no path"));*/
-
-    }
-
-    public File getAllDataFilePath() {
-        Preferences prefs = Preferences.userNodeForPackage(Main.class);
-        String filePath = prefs.get("filePath", null);
-        if (filePath != null) {
-            return new File(filePath);
-        }
-        else {
-            return null;
-        }
-    }
-
-
-    public void saveAllDataToFile(File file) {
+    public boolean save() {
         try {
+            AllDataWrapper allDataWrapper = new AllDataWrapper();
+
+            if (!this.file.exists()) {
+                Path pathToFile = Paths.get(pathString);
+                Files.createDirectories(pathToFile.getParent());
+                Files.createFile(pathToFile);
+            }
+
             JAXBContext context = JAXBContext.newInstance(AllDataWrapper.class);
             Marshaller marshaller = context.createMarshaller();
             marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
 
-            AllDataWrapper wrapper = new AllDataWrapper();
-
-            // Маршаллируем и сохраняем XML в файл
-            marshaller.marshal(wrapper,file);
-
-        } catch (JAXBException e) {
+            marshaller.marshal(allDataWrapper, this.file);
+        } catch (IOException e) {
             System.out.println("Can't save data to file:\n" + file.getPath());
+            e.printStackTrace();
+            return false;
+        } catch (JAXBException e) {
+            System.out.println("Can't marshal data");
+            e.printStackTrace();
+            return false;
+
         }
+        return true;
     }
 
-    public boolean save() {
-        AllDataWrapper = new AllDataWrapper();
+    public boolean load() {
+        if (!this.file.exists()) {
+            System.out.println("No data to load");
+            return false;
+        }
 
+        try {
+            JAXBContext context = JAXBContext.newInstance(AllDataWrapper.class);
+            Unmarshaller unmarshaller = context.createUnmarshaller();
+            AllDataWrapper allDataWrapper = (AllDataWrapper) unmarshaller.unmarshal(this.file);
+
+            if (allDataWrapper != null) {
+                AllUsers.setIDCounterAllUsers(allDataWrapper.getIDCounterAllUsers());
+                Map<Integer, User> users = new HashMap<>();
+                users.putAll(allDataWrapper.getDesigners());
+                users.putAll(allDataWrapper.getManagers());
+                AllUsers.setUsers(users);
+
+                AllData.setIdNumber(allDataWrapper.getProjectIdNumber());
+                AllData.setAllProjects(allDataWrapper.getAllProjects());
+                AllData.setWorkSumProjects(allDataWrapper.getWorkSumProjects());
+
+                AllData.syncProjects();
+
+                return true;
+            }
+        } catch (JAXBException e) {
+            e.printStackTrace();
+        }
+
+        return false;
     }
 
-    public static void load() {
-
-    }
 }

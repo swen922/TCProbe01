@@ -40,12 +40,12 @@ public class Project {
         this.dateCreationString = AllData.formatDate(newDate);
     }
 
-    /*public Project() {
+    public Project() {
         this.idNumber = 0;
         this.initiator = "";
         this.description = "";
         this.dateCreationString = AllData.formatDate(LocalDate.now());
-    }*/
+    }
 
     @XmlElement(name = "projectidnumber")
     public int getIdNumber() {
@@ -95,7 +95,7 @@ public class Project {
         this.linkedProject = newLinkedProject;
     }
 
-    public void addLinkedProjects(int... args) {
+    public void addLinkedProjects(Integer... args) {
         if (this.linkedProject == null) {
             List<Integer> result = new ArrayList<>();
             result.addAll(Arrays.asList(args));
@@ -220,6 +220,6 @@ public class Project {
                 ", initiator='" + initiator + '\'' +
                 ", description='" + description + '\'' +
                 ", workSum=" + AllData.intToDouble(workSum) +
-                '}';
+                '}' + "\n";
     }
 }

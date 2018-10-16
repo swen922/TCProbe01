@@ -84,7 +84,29 @@ public class Main {
         ParallelExecutor.getService().shutdown();*/
 
 
-        Designer kesha = new Designer("Kesha");
+
+
+        /*File file = new File("/_jToys/TCProbe01.xml");
+
+        AllDataWrapper adw = new AllDataWrapper();
+
+        System.out.println(adw);
+        System.out.println("");
+
+        JAXBContext context = JAXBContext.newInstance(AllDataWrapper.class);
+        Marshaller marshaller = context.createMarshaller();
+        marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
+        marshaller.marshal(adw, file);
+
+        Unmarshaller unmarshaller = context.createUnmarshaller();
+        AllDataWrapper adw2 = (AllDataWrapper) unmarshaller.unmarshal(file);
+
+        System.out.println(adw2);*/
+
+
+        // Сохраняем списки юзеров и проектов
+
+        /*Designer kesha = new Designer("Kesha");
         Designer evva = new Designer("Evvlampia");
         Designer roma = new Designer("ROMA");
         AllUsers.addUser(kesha);
@@ -102,23 +124,29 @@ public class Main {
         AllData.addNewProject(p);
         AllData.addNewProject(p2);
 
+        Loader loader = new Loader();
+        System.out.println(loader.save());*/
 
-        File file = new File("/_jToys/TCProbe01.xml");
 
-        AllDataWrapper adw = new AllDataWrapper();
+        // Читаем списки юзеров и проектов
 
-        System.out.println(adw);
+        Loader loader = new Loader();
+        System.out.println(loader.load());
+
+        System.out.println(AllUsers.getUsers());
+        System.out.println("");
+        System.out.println(AllData.getAllProjects());
+        System.out.println("");
+        System.out.println(AllData.getActiveProjects());
         System.out.println("");
 
-        JAXBContext context = JAXBContext.newInstance(AllDataWrapper.class);
-        Marshaller marshaller = context.createMarshaller();
-        marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
-        marshaller.marshal(adw, file);
+        AllData.setProjectArchive(1);
 
-        Unmarshaller unmarshaller = context.createUnmarshaller();
-        AllDataWrapper adw2 = (AllDataWrapper) unmarshaller.unmarshal(file);
+        System.out.println("after changes");
+        System.out.println(AllData.getActiveProjects());
+        System.out.println("");
+        System.out.println(AllData.getAllProjects());
 
-        System.out.println(adw2);
 
 
 

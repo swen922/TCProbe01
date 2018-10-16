@@ -173,7 +173,7 @@ public class AllData {
 
 
     /** Метод сверки и синхронизации списков и поля суммарного времени */
-    private static synchronized void syncProjects() {
+    public static synchronized void syncProjects() {
         Map<Integer, Project> newActiveProjects = new HashMap<>();
         allProjects.forEach((k,v)-> {
             if (!v.isArchive()) {
