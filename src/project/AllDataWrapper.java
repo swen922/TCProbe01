@@ -6,14 +6,13 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 @XmlRootElement(name = "alldatawrapper")
 public class AllDataWrapper {
 
     //поля класса AllData
-    private int projectIdNumber;
+    private int allProjectsIdNumber;
     private Map<Integer, Project> allProjects = new HashMap<>();
     private int workSumProjects;
 
@@ -26,7 +25,7 @@ public class AllDataWrapper {
 
 
     public AllDataWrapper() {
-        this.projectIdNumber = AllData.getIdNumber();
+        this.allProjectsIdNumber = AllData.getIdNumber();
         this.allProjects.putAll(AllData.getAllProjects());
         this.workSumProjects = AllData.getWorkSumProjects();
 
@@ -45,13 +44,13 @@ public class AllDataWrapper {
         }
     }
 
-    @XmlElement(name = "projectidnumber")
-    public int getProjectIdNumber() {
-        return projectIdNumber;
+    @XmlElement(name = "allprojectsidnumber")
+    public int getAllProjectsIdNumber() {
+        return allProjectsIdNumber;
     }
 
-    public void setProjectIdNumber(int newProjectIdNumber) {
-        this.projectIdNumber = newProjectIdNumber;
+    public void setAllProjectsIdNumber(int newAllProjectIdNumber) {
+        this.allProjectsIdNumber = newAllProjectIdNumber;
     }
 
     @XmlElement(name = "allprojects")
@@ -111,7 +110,7 @@ public class AllDataWrapper {
     @Override
     public String toString() {
         return "AllDataWrapper{" + "\n" +
-                "projectIdNumber=" + projectIdNumber + "\n" +
+                "projectIdNumber=" + allProjectsIdNumber + "\n" +
                 ", allProjects=" + allProjects + "\n" +
                 ", workSumProjects=" + workSumProjects + "\n" +
                 ", IDCounterAllUsers=" + IDCounterAllUsers + "\n" +

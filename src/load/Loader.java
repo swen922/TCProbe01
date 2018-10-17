@@ -72,7 +72,7 @@ public class Loader {
                 users.putAll(allDataWrapper.getManagers());
                 AllUsers.setUsers(users);
 
-                AllData.setIdNumber(allDataWrapper.getProjectIdNumber());
+                AllData.setIdNumber(allDataWrapper.getAllProjectsIdNumber());
                 AllData.setAllProjects(allDataWrapper.getAllProjects());
                 AllData.setWorkSumProjects(allDataWrapper.getWorkSumProjects());
 
