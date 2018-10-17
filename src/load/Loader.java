@@ -1,4 +1,5 @@
-import javafx.scene.control.Alert;
+package load;
+
 import project.AllData;
 import project.AllDataWrapper;
 import user.AllUsers;
@@ -15,10 +16,8 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.prefs.Preferences;
 
 public class Loader {
-
     private final String meUser = System.getProperty("user.name");
     private final String pathString = "/Users/" + meUser + "/Library/Application Support/TimeCountProbe/tcprobe.xml";
     private File file = new File(pathString);
@@ -87,5 +86,4 @@ public class Loader {
 
         return false;
     }
-
 }

@@ -4,8 +4,7 @@ import user.Designer;
 
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
-import java.math.BigDecimal;
-import java.math.RoundingMode;
+import javax.xml.bind.annotation.XmlTransient;
 import java.time.LocalDate;
 import java.util.Objects;
 
@@ -27,26 +26,23 @@ public class WorkTime {
     }
 
     public WorkTime() {
-        this.dateString = AllData.formatDate(LocalDate.now());
-        this.designerID = 0;
     }
 
     /*public LocalDate getDate() {
         return AllData.parseDate(this.dateString);
     }*/
 
-
     @XmlElement(name = "datestring")
-    public String getDateSting() {
+    public String getDateString() {
         return dateString;
+    }
+
+    public void setDateString(String dateString) {
+        this.dateString = dateString;
     }
 
     public LocalDate getDate() {
         return AllData.parseDate(this.dateString);
-    }
-
-    public void setDate(String date) {
-        this.dateString = date;
     }
 
     @XmlElement(name = "designerid")
@@ -63,6 +59,7 @@ public class WorkTime {
         return this.time;
     }
 
+    @XmlTransient
     public double getTimeDouble() {
         return AllData.intToDouble(time);
     }
@@ -80,20 +77,20 @@ public class WorkTime {
         }
     }
 
-    /** Используем для equals 2 поля из 3. Время не используем. */
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         WorkTime workTime = (WorkTime) o;
         return getDesignerID() == workTime.getDesignerID() &&
-                Objects.equals(AllData.parseDate(getDateSting()), AllData.parseDate(workTime.getDateSting()));
+                getTime() == workTime.getTime() &&
+                Objects.equals(getDateString(), workTime.getDateString());
     }
 
-    /** Используем для hashCode 2 поля из 3. Время не используем. */
     @Override
     public int hashCode() {
-        return Objects.hash(getDateSting(), getDesignerID());
+
+        return Objects.hash(getDateString(), getDesignerID(), getTime());
     }
 
     @Override
@@ -104,4 +101,6 @@ public class WorkTime {
                 ", time=" + AllData.intToDouble(time) +
                 '}';
     }
+
+
 }

@@ -1,0 +1,64 @@
+package test;
+
+import project.AllData;
+import project.Project;
+import user.AllUsers;
+import user.Designer;
+import user.Manager;
+
+import java.time.LocalDate;
+
+public class Generator {
+
+    public static void generate() {
+        for (int i = 1; i <= 10; i++) {
+            Designer designer = new Designer("des-" + i);
+            AllUsers.addUser(designer);
+        }
+        Manager manager1 = new Manager("manager-1");
+        Manager manager2 = new Manager("manager-2");
+        AllUsers.addUser(manager1);
+        AllUsers.addUser(manager2);
+
+        for (int j = 1; j<=100; j++) {
+            String init;
+            int year;
+            int month;
+            int day;
+
+            if (j % 10 == 0) {
+                init = "initiator-1";
+                year = 2016;
+                month = j / 10 + 2;
+                day = month * 2;
+
+            }
+            else if (j % 2 == 0) {
+                init = "initiator-2";
+                year = 2017;
+                month = (int) (Math.random() * 10 + 1);
+                day = (int) (Math.random() * 25 + 2);
+            }
+            else {
+                init = "initiator-3";
+                year = 2018;
+                month = (int) (Math.random() * 10 + 1);
+                day = (int) (Math.random() * 27 + 1);
+            }
+            LocalDate date = LocalDate.of(year, month, day);
+            String descr = new StringBuilder(init).reverse().toString() + " === " + (Math.random() * 20);
+            Project project = new Project(init, descr, date);
+
+            int works = (int) (Math.random() * 4);
+
+            for (int k = 0; k <= works; k++) {
+                int ID = (int) (Math.random() * 10 + 1);
+                int tmp = (int) ((Math.random() * 1000) / 30);
+                double newtime = AllData.intToDouble(tmp);
+                project.addWorkTime(date, ID, newtime);
+            }
+
+            AllData.addNewProject(project);
+        }
+    }
+}

@@ -4,6 +4,7 @@ import user.Designer;
 
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDate;
@@ -22,7 +23,7 @@ public class Project {
     private volatile boolean isArchive = false;
     private String comment;
     private List<Integer> linkedProject;
-    private int PONumber = 0;
+    private int PONumber;
     private volatile int workSum = 0;
     private List<WorkTime> work = new ArrayList<>();
 
@@ -138,6 +139,7 @@ public class Project {
         return workSum;
     }
 
+    @XmlTransient
     public double getWorkSumDouble() {
         return AllData.intToDouble(workSum);
     }
@@ -168,7 +170,7 @@ public class Project {
 
         for (WorkTime wt : work) {
             /** Проверяем наличие такого дня + дизайнера **/
-            if ((AllData.parseDate(wt.getDateSting()).equals(newDate)) && (wt.getDesignerID() == idUser)) {
+            if ((AllData.parseDate(wt.getDateString()).equals(newDate)) && (wt.getDesignerID() == idUser)) {
                 // сначала правим суммарное рабочее время всего проекта
                 int diff = AllData.doubleToInt(newTime) - wt.getTime();
                 int newWorkSumInt = getWorkSum() + diff;
@@ -196,21 +198,27 @@ public class Project {
     }
 
 
-    /** Используем только ID-номер проекта для equals,
-     *  потому что остальные поля могут измениться **/
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Project project = (Project) o;
-        return getIdNumber() == project.getIdNumber();
+        return getIdNumber() == project.getIdNumber() &&
+                isArchive() == project.isArchive() &&
+                getPONumber() == project.getPONumber() &&
+                getWorkSum() == project.getWorkSum() &&
+                Objects.equals(getInitiator(), project.getInitiator()) &&
+                Objects.equals(getDescription(), project.getDescription()) &&
+                Objects.equals(getDateCreationString(), project.getDateCreationString()) &&
+                Objects.equals(getComment(), project.getComment()) &&
+                Objects.equals(getLinkedProject(), project.getLinkedProject()) &&
+                Objects.equals(getWork(), project.getWork());
     }
 
-    /** Используем только ID-номер проекта для hashCode,
-     * потому что остальные поля могут измениться **/
     @Override
     public int hashCode() {
-        return Objects.hash(getIdNumber());
+
+        return Objects.hash(getIdNumber(), getInitiator(), getDescription(), getDateCreationString(), isArchive(), getComment(), getLinkedProject(), getPONumber(), getWorkSum(), getWork());
     }
 
     @Override

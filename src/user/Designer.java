@@ -6,9 +6,9 @@ import java.util.Objects;
 
 @XmlRootElement(name = "designer")
 public class Designer implements User {
-    private int IDNumber = 0;
+    private int IDNumber;
     private String nameLogin;
-    private Role role;
+    private Role role = Role.DESIGNER;
     private String fullName;
     private String email;
 
@@ -16,7 +16,6 @@ public class Designer implements User {
     public Designer(String nameLogin) {
         this.IDNumber = AllUsers.incrementIdNumberAndGet();
         this.nameLogin = nameLogin.toLowerCase();
-        this.role = Role.DESIGNER;
     }
 
     public Designer() {
@@ -25,6 +24,10 @@ public class Designer implements User {
     @XmlElement(name = "designeridnumber")
     public int getIDNumber() {
         return IDNumber;
+    }
+
+    public void setIDNumber(int newIDNumber) {
+        this.IDNumber = newIDNumber;
     }
 
     @XmlElement(name = "desigernamelogin")
@@ -63,23 +66,22 @@ public class Designer implements User {
         this.email = newEmail;
     }
 
-
-
-    /** Используем только ID-номер дизайнера для equals,
-     * потому что остальные поля могут измениться **/
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Designer designer = (Designer) o;
-        return getIDNumber() == designer.getIDNumber();
+        return getIDNumber() == designer.getIDNumber() &&
+                Objects.equals(getNameLogin(), designer.getNameLogin()) &&
+                getRole() == designer.getRole() &&
+                Objects.equals(getFullName(), designer.getFullName()) &&
+                Objects.equals(getEmail(), designer.getEmail());
     }
 
-    /** Используем только ID-номер дизайнера для hashCode,
-     * потому что остальные поля могут измениться **/
     @Override
     public int hashCode() {
-        return Objects.hash(getIDNumber());
+
+        return Objects.hash(getIDNumber(), getNameLogin(), getRole(), getFullName(), getEmail());
     }
 
     @Override

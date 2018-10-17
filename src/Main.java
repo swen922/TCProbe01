@@ -1,6 +1,8 @@
 import project.AllData;
 import project.AllDataWrapper;
 import project.Project;
+import project.WorkTime;
+import test.SaveLoadTest;
 import threads.ParallelExecutor;
 import threads.ThreadCreateProject;
 import threads.ThreadCreateUser;
@@ -17,6 +19,8 @@ import java.io.File;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDate;
+import java.util.Collection;
+import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
@@ -130,7 +134,7 @@ public class Main {
 
         // Читаем списки юзеров и проектов
 
-        Loader loader = new Loader();
+        /*Loader loader = new Loader();
         System.out.println(loader.load());
 
         System.out.println(AllUsers.getUsers());
@@ -146,8 +150,18 @@ public class Main {
         System.out.println(AllData.getActiveProjects());
         System.out.println("");
         System.out.println(AllData.getAllProjects());
+        System.out.println("");
+        Collection<Project> collProjects = AllData.getAllProjects().values();
+        for (Project p : collProjects) {
+            System.out.println(p.getIdNumber());
+            for (WorkTime wt : p.getWork()) {
+                System.out.print(wt);
+            }
+            System.out.println("");
+        }*/
 
 
+        SaveLoadTest.saveTest();
 
 
 

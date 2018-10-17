@@ -6,16 +6,15 @@ import java.util.Objects;
 
 @XmlRootElement(name = "manager")
 public class Manager implements User {
-    private int IDNumber = 0;
+    private int IDNumber;
     private String nameLogin;
-    private Role role;
+    private Role role = Role.MANAGER;
     private String fullName;
     private String email;
 
     public Manager(String nameLogin) {
         this.IDNumber = AllUsers.incrementIdNumberAndGet();
         this.nameLogin = nameLogin.toLowerCase();
-        this.role = Role.MANAGER;
     }
 
     public Manager() {
@@ -24,6 +23,10 @@ public class Manager implements User {
     @XmlElement(name = "manageridnumber")
     public int getIDNumber() {
         return IDNumber;
+    }
+
+    public void setIDNumber(int IDNumber) {
+        this.IDNumber = IDNumber;
     }
 
     @XmlElement(name = "managernamelogin")
@@ -67,12 +70,17 @@ public class Manager implements User {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Manager manager = (Manager) o;
-        return getIDNumber() == manager.getIDNumber();
+        return getIDNumber() == manager.getIDNumber() &&
+                Objects.equals(getNameLogin(), manager.getNameLogin()) &&
+                getRole() == manager.getRole() &&
+                Objects.equals(getFullName(), manager.getFullName()) &&
+                Objects.equals(getEmail(), manager.getEmail());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getIDNumber());
+
+        return Objects.hash(getIDNumber(), getNameLogin(), getRole(), getFullName(), getEmail());
     }
 
     @Override
@@ -80,7 +88,8 @@ public class Manager implements User {
         return "Manager{" +
                 "IDNumber=" + IDNumber +
                 ", nameLogin='" + nameLogin + '\'' +
+                ", role=" + role +
                 ", fullName='" + fullName + '\'' +
-                '}';
+                '}' + "\n";
     }
 }
