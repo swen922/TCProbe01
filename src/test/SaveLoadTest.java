@@ -25,27 +25,33 @@ public class SaveLoadTest {
 
         System.out.println(AllUsers.getOneUser("manager-1"));
 
-        // Делаем копию созданных список перед тем, как обнулить их
+        // Делаем копию созданных списков перед тем, как обнулить их
         Map<Integer, User> users = new HashMap<>();
         Map<Integer, Project> allProjects = new HashMap<>();
         Map<Integer, Project> activeProjects = new HashMap<>();
         users.putAll(AllUsers.getUsers());
         allProjects.putAll(AllData.getAllProjects());
         activeProjects.putAll(AllData.getActiveProjects());
+        int projects = AllData.getIdNumber();
+        int usersIDs = AllUsers.getIDCounterAllUsers();
 
         // Обнуляем все три списка
         AllData.getAllProjects().clear();
         AllData.getActiveProjects().clear();
         AllUsers.getUsers().clear();
+        AllData.setIdNumber(0);
+        AllUsers.setIDCounterAllUsers(0);
 
         System.out.println(AllUsers.getOneUser("manager-1"));
 
-        // Звново читаем все данные
+        // Заново читаем все данные
         System.out.println(loader.load());
 
         Assert.assertEquals(users, AllUsers.getUsers());
         Assert.assertEquals(allProjects, AllData.getAllProjects());
         Assert.assertEquals(activeProjects, AllData.getActiveProjects());
+        Assert.assertEquals(projects, AllData.getIdNumber());
+        Assert.assertEquals(usersIDs, AllUsers.getIDCounterAllUsers());
 
         System.out.println(AllUsers.getOneUser("manager-1"));
     }
