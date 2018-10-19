@@ -57,8 +57,12 @@ public class AllData {
         return workSumProjects.get();
     }
 
-    public static void setWorkSumProjects(int newWorkSumProjects) {
+    public static synchronized void setWorkSumProjects(int newWorkSumProjects) {
         AllData.workSumProjects.set(newWorkSumProjects);
+    }
+
+    private static void addWorkSumProjects(int addTime) {
+        AllData.workSumProjects.addAndGet(addTime);
     }
 
 
@@ -92,7 +96,7 @@ public class AllData {
 
     /** Методы добавления, удаления проектов */
 
-    public static boolean addNewProject(Project newProject) {
+    public synchronized static boolean addNewProject(Project newProject) {
         if (!isProjectExist(newProject.getIdNumber())) {
             allProjects.put(newProject.getIdNumber(), newProject);
             activeProjects.put(newProject.getIdNumber(), newProject);
@@ -107,7 +111,7 @@ public class AllData {
         return false;
     }
 
-    public static boolean deleteProject(int deadProject) {
+    public synchronized static boolean deleteProject(int deadProject) {
         if (isProjectExist(deadProject)) {
             allProjects.remove(deadProject);
             activeProjects.remove(deadProject);
@@ -161,6 +165,7 @@ public class AllData {
     }
 
     public static boolean isProjectArchive(int idProject) {
+
         if (isProjectExist(idProject)) {
             Project project = allProjects.get(idProject);
             if (project.isArchive()) {
@@ -171,9 +176,24 @@ public class AllData {
     }
 
 
+    /** Метод добавления и корректировки рабочего времени в проектах */
+
+    public static synchronized boolean addWorkTime(int projectIDnumber, LocalDate correctDate, int idUser, double newTime) {
+
+        if (isProjectExist(projectIDnumber) && (!isProjectArchive(projectIDnumber))) {
+            Project project = getOneActiveProject(projectIDnumber);
+
+            int difference = project.addWorkTime(correctDate, idUser, newTime);
+            addWorkSumProjects(difference);
+            return true;
+        }
+        return false;
+    }
+
+
 
     /** Метод сверки и синхронизации списков и поля суммарного времени */
-    public static synchronized void syncProjects() {
+    public static synchronized void rebuildActiveProjects() {
         Map<Integer, Project> newActiveProjects = new HashMap<>();
         allProjects.forEach((k,v)-> {
             if (!v.isArchive()) {

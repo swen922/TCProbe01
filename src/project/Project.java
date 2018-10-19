@@ -5,37 +5,35 @@ import user.Designer;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
-import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 @XmlRootElement(name = "project")
 public class Project {
 
     private int idNumber;
+    private String company;
     private String initiator;
     private String description;
     private String dateCreationString;
     private volatile boolean isArchive = false;
     private String comment;
-    private List<Integer> linkedProject;
+    private Set<Integer> linkedProjects = new TreeSet<>();
     private int PONumber;
     private volatile int workSum = 0;
     private List<WorkTime> work = new ArrayList<>();
 
-    public Project(String initiator, String description) {
+    public Project(String comp, String initiator, String description) {
         this.idNumber = AllData.incrementIdNumberAndGet();
+        this.company = comp;
         this.initiator = initiator;
         this.description = description;
         this.dateCreationString = AllData.formatDate(LocalDate.now());
     }
 
-    public Project(String initiator, String description, LocalDate newDate) {
+    public Project(String comp, String initiator, String description, LocalDate newDate) {
         this.idNumber = AllData.incrementIdNumberAndGet();
+        this.company = comp;
         this.initiator = initiator;
         this.description = description;
         this.dateCreationString = AllData.formatDate(newDate);
@@ -43,6 +41,7 @@ public class Project {
 
     public Project() {
         this.idNumber = 0;
+        this.company = "";
         this.initiator = "";
         this.description = "";
         this.dateCreationString = AllData.formatDate(LocalDate.now());
@@ -55,6 +54,15 @@ public class Project {
 
     public void setIdNumber(int idNumber) {
         this.idNumber = idNumber;
+    }
+
+    @XmlElement(name = "clientcompany")
+    public String getCompany() {
+        return company;
+    }
+
+    public void setCompany(String company) {
+        this.company = company;
     }
 
     @XmlElement(name = "initby")
@@ -80,31 +88,21 @@ public class Project {
         return dateCreationString;
     }
 
-    public void setDateCreationString(String newDateCreationString) {
+    public synchronized void setDateCreationString(String newDateCreationString) {
         this.dateCreationString = newDateCreationString;
     }
 
     @XmlElement(name = "linkedprojects")
-    public List<Integer> getLinkedProject() {
-        if (this.linkedProject != null) {
-            return linkedProject;
-        }
-        return null;
+    public Set<Integer> getLinkedProjects() {
+        return this.linkedProjects;
     }
 
-    public void setLinkedProject(List<Integer> newLinkedProject) {
-        this.linkedProject = newLinkedProject;
+    public synchronized void setLinkedProject(Set<Integer> newLinkedProjects) {
+        this.linkedProjects = newLinkedProjects;
     }
 
-    public void addLinkedProjects(Integer... args) {
-        if (this.linkedProject == null) {
-            List<Integer> result = new ArrayList<>();
-            result.addAll(Arrays.asList(args));
-            setLinkedProject(result);
-        }
-        else {
-            getLinkedProject().addAll(Arrays.asList(args));
-        }
+    public synchronized void addLinkedProjects(Integer... args) {
+        this.linkedProjects.addAll(Arrays.asList(args));
     }
 
     @XmlElement(name = "ponumber")
@@ -112,7 +110,7 @@ public class Project {
         return PONumber;
     }
 
-    public void setPONumber(int newPONumber) {
+    public synchronized void setPONumber(int newPONumber) {
         this.PONumber = newPONumber;
     }
 
@@ -139,16 +137,16 @@ public class Project {
         return workSum;
     }
 
+    private void setWorkSum(int newWorkSum) {
+        this.workSum = newWorkSum >= 0 ? newWorkSum : 0;
+    }
+
     @XmlTransient
     public double getWorkSumDouble() {
         return AllData.intToDouble(workSum);
     }
 
-    private void setWorkSum(int newWorkSum) {
-        this.workSum = newWorkSum >= 0 ? newWorkSum : 0;
-    }
-
-    public void setWorkSumDouble(double newWorkSumDouble) {
+    protected void setWorkSumDouble(double newWorkSumDouble) {
         if (newWorkSumDouble <= 0) {
             setWorkSum(0);
         }
@@ -162,30 +160,39 @@ public class Project {
         return work;
     }
 
-    public void setWork(List<WorkTime> work) {
+    public synchronized void setWork(List<WorkTime> work) {
         this.work = work;
     }
 
-    public synchronized void addWorkTime(LocalDate newDate, int idUser, double newTime) {
+
+    /** Метод рассчитан на вызов из класса AllData,
+     * в котором содержится одноименный метод для обращения извне.
+     * Возвращаемое значение int используется в AllData для добавления
+     * к суммарному общему рабочему времени workSumProjects
+     * */
+    protected int addWorkTime(LocalDate newDate, int idUser, double newTimeDouble) {
+
+        int newTimeInt = AllData.doubleToInt(newTimeDouble);
 
         for (WorkTime wt : work) {
-            /** Проверяем наличие такого дня + дизайнера **/
+            // Проверяем наличие такого дня + дизайнера
             if ((AllData.parseDate(wt.getDateString()).equals(newDate)) && (wt.getDesignerID() == idUser)) {
                 // сначала правим суммарное рабочее время всего проекта
-                int diff = AllData.doubleToInt(newTime) - wt.getTime();
+                int diff = newTimeInt - wt.getTime();
                 int newWorkSumInt = getWorkSum() + diff;
                 setWorkSum(newWorkSumInt);
 
-                /** теперь вносим время в список рабочего времени **/
-                wt.setTime(AllData.doubleToInt(newTime));
-                return;
+                // теперь вносим время в список рабочего времени
+                wt.setTime(newTimeInt);
+                return diff;
             }
         }
 
-        /** Создаем новый экземпляр WorkTime и кладем в список **/
-        int newWorkSumInt = getWorkSum() + AllData.doubleToInt(newTime);
+        // Создаем новый экземпляр WorkTime и кладем в список
+        int newWorkSumInt = getWorkSum() + newTimeInt;
         setWorkSum(newWorkSumInt);
-        work.add(new WorkTime(newDate, idUser, newTime));
+        work.add(new WorkTime(newDate, idUser, newTimeDouble));
+        return newTimeInt;
     }
 
 
@@ -194,7 +201,7 @@ public class Project {
         for (WorkTime wt : this.work) {
             result += wt.getTime();
         }
-        workSum = result;
+        this.workSum = result;
     }
 
 
@@ -211,14 +218,14 @@ public class Project {
                 Objects.equals(getDescription(), project.getDescription()) &&
                 Objects.equals(getDateCreationString(), project.getDateCreationString()) &&
                 Objects.equals(getComment(), project.getComment()) &&
-                Objects.equals(getLinkedProject(), project.getLinkedProject()) &&
+                Objects.equals(getLinkedProjects(), project.getLinkedProjects()) &&
                 Objects.equals(getWork(), project.getWork());
     }
 
     @Override
     public int hashCode() {
 
-        return Objects.hash(getIdNumber(), getInitiator(), getDescription(), getDateCreationString(), isArchive(), getComment(), getLinkedProject(), getPONumber(), getWorkSum(), getWork());
+        return Objects.hash(getIdNumber(), getInitiator(), getDescription(), getDateCreationString(), isArchive(), getComment(), getLinkedProjects(), getPONumber(), getWorkSum(), getWork());
     }
 
     @Override

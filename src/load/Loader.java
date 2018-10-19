@@ -11,15 +11,14 @@ import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.nio.file.*;
 import java.util.HashMap;
 import java.util.Map;
 
 public class Loader {
     private final String meUser = System.getProperty("user.name");
     private final String pathString = "/Users/" + meUser + "/Library/Application Support/TimeCountProbe/tcprobe.xml";
+    private Path pathToFile = Paths.get(pathString);
     private File file = new File(pathString);
 
     public File getFile() {
@@ -30,8 +29,12 @@ public class Loader {
         try {
             AllDataWrapper allDataWrapper = new AllDataWrapper();
 
-            if (!this.file.exists()) {
-                Path pathToFile = Paths.get(pathString);
+            if (this.file.exists()) {
+                String backupPath = "/Users/" + meUser + "/Library/Application Support/TimeCountProbe/tcprobeBackup.xml";
+                Path pathToBackupFile = Paths.get(backupPath);
+                Files.copy(pathToFile, pathToBackupFile, StandardCopyOption.REPLACE_EXISTING);
+            }
+            else if (!this.file.exists()) {
                 Files.createDirectories(pathToFile.getParent());
                 Files.createFile(pathToFile);
             }
@@ -76,7 +79,7 @@ public class Loader {
                 AllData.setAllProjects(allDataWrapper.getAllProjects());
                 AllData.setWorkSumProjects(allDataWrapper.getWorkSumProjects());
 
-                AllData.syncProjects();
+                AllData.rebuildActiveProjects();
 
                 return true;
             }

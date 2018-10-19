@@ -34,6 +34,9 @@ public class SaveLoadTest {
         activeProjects.putAll(AllData.getActiveProjects());
         int projects = AllData.getIdNumber();
         int usersIDs = AllUsers.getIDCounterAllUsers();
+        System.out.println(projects);
+        System.out.println(usersIDs);
+        System.out.println(AllData.intToDouble(AllData.getWorkSumProjects()));
 
         // Обнуляем все три списка
         AllData.getAllProjects().clear();
@@ -54,6 +57,12 @@ public class SaveLoadTest {
         Assert.assertEquals(usersIDs, AllUsers.getIDCounterAllUsers());
 
         System.out.println(AllUsers.getOneUser("manager-1"));
+
+        projects = AllData.getIdNumber();
+        usersIDs = AllUsers.getIDCounterAllUsers();
+        System.out.println(projects);
+        System.out.println(usersIDs);
+        System.out.println(AllData.intToDouble(AllData.getWorkSumProjects()));
     }
 
 }

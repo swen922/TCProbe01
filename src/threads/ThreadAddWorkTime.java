@@ -22,11 +22,7 @@ public class ThreadAddWorkTime implements Callable<Boolean> {
 
     @Override
     public Boolean call() throws Exception {
-        Project project = AllData.getOneActiveProject(idProject);
-        if (project != null) {
-            project.addWorkTime(newDate, idUser, newTime);
-            return true;
-        }
-        return false;
+        boolean result = AllData.addWorkTime(idProject, newDate, idUser, newTime);
+        return result;
     }
 }
