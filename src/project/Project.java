@@ -23,6 +23,7 @@ public class Project {
     private volatile int workSum = 0;
     private List<WorkTime> work = new ArrayList<>();
 
+
     public Project(String comp, String initiator, String description) {
         this.idNumber = AllData.incrementIdNumberAndGet();
         this.company = comp;
@@ -92,6 +93,24 @@ public class Project {
         this.dateCreationString = newDateCreationString;
     }
 
+    @XmlElement(name = "isarchive")
+    public boolean isArchive() {
+        return isArchive;
+    }
+
+    public synchronized void setArchive(boolean archive) {
+        isArchive = archive;
+    }
+
+    @XmlElement(name = "comment")
+    public String getComment() {
+        return comment;
+    }
+
+    public synchronized void setComment(String comment) {
+        this.comment = comment;
+    }
+
     @XmlElement(name = "linkedprojects")
     public Set<Integer> getLinkedProjects() {
         return this.linkedProjects;
@@ -112,24 +131,6 @@ public class Project {
 
     public synchronized void setPONumber(int newPONumber) {
         this.PONumber = newPONumber;
-    }
-
-    @XmlElement(name = "isarchive")
-    public boolean isArchive() {
-        return isArchive;
-    }
-
-    public synchronized void setArchive(boolean archive) {
-        isArchive = archive;
-    }
-
-    @XmlElement(name = "comment")
-    public String getComment() {
-        return comment;
-    }
-
-    public synchronized void setComment(String comment) {
-        this.comment = comment;
     }
 
     @XmlElement(name = "worksumint")
@@ -214,6 +215,7 @@ public class Project {
                 isArchive() == project.isArchive() &&
                 getPONumber() == project.getPONumber() &&
                 getWorkSum() == project.getWorkSum() &&
+                Objects.equals(getCompany(), project.getCompany()) &&
                 Objects.equals(getInitiator(), project.getInitiator()) &&
                 Objects.equals(getDescription(), project.getDescription()) &&
                 Objects.equals(getDateCreationString(), project.getDateCreationString()) &&
@@ -225,16 +227,19 @@ public class Project {
     @Override
     public int hashCode() {
 
-        return Objects.hash(getIdNumber(), getInitiator(), getDescription(), getDateCreationString(), isArchive(), getComment(), getLinkedProjects(), getPONumber(), getWorkSum(), getWork());
+        return Objects.hash(getIdNumber(), getCompany(), getInitiator(), getDescription(), getDateCreationString(), isArchive(), getComment(), getLinkedProjects(), getPONumber(), getWorkSum(), getWork());
     }
 
     @Override
     public String toString() {
         return "Project{" +
                 "idNumber=" + idNumber +
+                ", company='" + company + '\'' +
                 ", initiator='" + initiator + '\'' +
                 ", description='" + description + '\'' +
+                ", dateCreationString='" + dateCreationString + '\'' +
+                ", isArchive=" + isArchive +
                 ", workSum=" + AllData.intToDouble(workSum) +
-                '}' + "\n";
+                '}';
     }
 }

@@ -22,7 +22,6 @@ public class ThreadAddWorkTime implements Callable<Boolean> {
 
     @Override
     public Boolean call() throws Exception {
-        boolean result = AllData.addWorkTime(idProject, newDate, idUser, newTime);
-        return result;
+        return AllData.addWorkTime(idProject, newDate, idUser, newTime);
     }
 }

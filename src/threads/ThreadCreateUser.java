@@ -2,6 +2,7 @@ package threads;
 
 import user.Designer;
 import user.Manager;
+import user.Role;
 import user.User;
 
 import java.util.concurrent.Callable;
@@ -9,11 +10,11 @@ import java.util.concurrent.Callable;
 public class ThreadCreateUser implements Callable<User> {
 
     private String nameLogin;
-    private Class userClass;
+    private Role role;
 
-    public ThreadCreateUser(String nameLogin, Class userClass) {
+    public ThreadCreateUser(String nameLogin, Role role) {
         this.nameLogin = nameLogin;
-        this.userClass = userClass;
+        this.role = role;
     }
 
     public String getNameLogin() {
@@ -27,10 +28,10 @@ public class ThreadCreateUser implements Callable<User> {
     @Override
     public User call() throws Exception {
         User result = null;
-        if (userClass == Designer.class) {
+        if (role.equals(Role.DESIGNER)) {
             result = new Designer(nameLogin);
         }
-        else if (userClass == Manager.class) {
+        else if (role.equals(Role.MANAGER)) {
             result = new Manager(nameLogin);
         }
         return result;

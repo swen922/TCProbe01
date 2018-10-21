@@ -231,7 +231,7 @@ public class AllData {
     }
 
     /** Форматировщик даты. */
-    private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("yyyy.M.d");
+    private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("yyyy.MM.dd");
 
     public static String formatDate(LocalDate date) {
         if (date == null) {

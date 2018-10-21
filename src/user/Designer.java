@@ -12,6 +12,11 @@ public class Designer implements User {
     private String fullName;
     private String email;
 
+    /**
+     * TODO в графон вставить проверку nameLogin на уникальность,
+     * чтобы не было дублей логина в системе
+     * */
+
 
     public Designer(String nameLogin) {
         this.IDNumber = AllUsers.incrementIdNumberAndGet();

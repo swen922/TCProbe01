@@ -21,11 +21,11 @@ public class AllUsers {
         return IDCounterAllUsers.get();
     }
 
-    public static void setIDCounterAllUsers(int newIDCounterAllUsers) {
+    public static synchronized void setIDCounterAllUsers(int newIDCounterAllUsers) {
         AllUsers.IDCounterAllUsers.set(newIDCounterAllUsers);
     }
 
-    public static int incrementIdNumberAndGet() {
+    public static synchronized int incrementIdNumberAndGet() {
         return IDCounterAllUsers.incrementAndGet();
     }
 
@@ -33,7 +33,7 @@ public class AllUsers {
         return users;
     }
 
-    public static void setUsers(Map<Integer, User> users) {
+    public static synchronized void setUsers(Map<Integer, User> users) {
         AllUsers.users = users;
     }
 
@@ -65,7 +65,7 @@ public class AllUsers {
 
     /** Добавление и удаление пользователя */
 
-    public static boolean addUser(User user) {
+    public static synchronized boolean addUser(User user) {
         if (!users.containsKey(user.getIDNumber())) {
             users.put(user.getIDNumber(), user);
             return true;
@@ -73,7 +73,7 @@ public class AllUsers {
         return false;
     }
 
-    public static boolean deleteUser(int idUser) {
+    public static synchronized boolean deleteUser(int idUser) {
         if (isUserExist(idUser)) {
             users.remove(idUser);
             return true;

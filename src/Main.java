@@ -161,7 +161,8 @@ public class Main {
         }*/
 
 
-        SaveLoadTest.saveTest();
+        SaveLoadTest saveLoadTest = new SaveLoadTest();
+        saveLoadTest.saveTest();
 
 
 

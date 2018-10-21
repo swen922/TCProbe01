@@ -16,14 +16,16 @@ import java.util.Map;
 public class SaveLoadTest {
 
     @Test
-    public static void saveTest() {
+    public void saveTest() {
 
         Generator.generate();
+
+        AllUsers.getOneUser(12).setFullName("");
 
         Loader loader = new Loader();
         System.out.println(loader.save());
 
-        System.out.println(AllUsers.getOneUser("manager-1"));
+        System.out.println(AllUsers.getOneUser("manager-2"));
 
         // Делаем копию созданных списков перед тем, как обнулить их
         Map<Integer, User> users = new HashMap<>();
@@ -32,9 +34,9 @@ public class SaveLoadTest {
         users.putAll(AllUsers.getUsers());
         allProjects.putAll(AllData.getAllProjects());
         activeProjects.putAll(AllData.getActiveProjects());
-        int projects = AllData.getIdNumber();
+        int projectsID = AllData.getIdNumber();
         int usersIDs = AllUsers.getIDCounterAllUsers();
-        System.out.println(projects);
+        System.out.println(projectsID);
         System.out.println(usersIDs);
         System.out.println(AllData.intToDouble(AllData.getWorkSumProjects()));
 
@@ -45,7 +47,7 @@ public class SaveLoadTest {
         AllData.setIdNumber(0);
         AllUsers.setIDCounterAllUsers(0);
 
-        System.out.println(AllUsers.getOneUser("manager-1"));
+        System.out.println(AllUsers.getOneUser("manager-2"));
 
         // Заново читаем все данные
         System.out.println(loader.load());
@@ -53,16 +55,19 @@ public class SaveLoadTest {
         Assert.assertEquals(users, AllUsers.getUsers());
         Assert.assertEquals(allProjects, AllData.getAllProjects());
         Assert.assertEquals(activeProjects, AllData.getActiveProjects());
-        Assert.assertEquals(projects, AllData.getIdNumber());
+        Assert.assertEquals(projectsID, AllData.getIdNumber());
         Assert.assertEquals(usersIDs, AllUsers.getIDCounterAllUsers());
+        Assert.assertEquals(users.get(9), AllUsers.getOneUser(9));
+        Assert.assertEquals(allProjects.get(35), AllData.getAnyProject(35));
 
-        System.out.println(AllUsers.getOneUser("manager-1"));
+        System.out.println(AllUsers.getOneUser("manager-2"));
 
-        projects = AllData.getIdNumber();
-        usersIDs = AllUsers.getIDCounterAllUsers();
-        System.out.println(projects);
-        System.out.println(usersIDs);
-        System.out.println(AllData.intToDouble(AllData.getWorkSumProjects()));
+        AllData.addWorkTime(21, LocalDate.now(), 8, 3.4);
+        System.out.println(allProjects.get(21));
+        System.out.println(AllData.getAnyProject(21));
+        System.out.println(AllUsers.getOneUser(12).getFullName().isEmpty());
+
+
     }
 
 }

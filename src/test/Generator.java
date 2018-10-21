@@ -45,7 +45,7 @@ public class Generator {
             else {
                 companyClient = "Nestle";
                 init = "initiator-3";
-                year = 2018;
+                year = 2015;
                 month = (int) (Math.random() * 10 + 1);
                 day = (int) (Math.random() * 27 + 1);
             }
