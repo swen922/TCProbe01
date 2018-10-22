@@ -1,10 +1,11 @@
 package threads;
 
+import project.AllData;
 import project.Project;
 
 import java.util.concurrent.Callable;
 
-public class ThreadCreateProject implements Callable<Project> {
+public class ThreadCreateProject implements Callable<Boolean> {
 
     private String companyClient;
     private String initiator;
@@ -41,7 +42,8 @@ public class ThreadCreateProject implements Callable<Project> {
     }
 
     @Override
-    public Project call() throws Exception {
-        return new Project(companyClient, initiator, description);
+    public Boolean call() throws Exception {
+        Project project = new Project(companyClient, initiator, description);
+        return AllData.addNewProject(project);
     }
 }

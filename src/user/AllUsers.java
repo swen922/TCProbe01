@@ -66,7 +66,7 @@ public class AllUsers {
     /** Добавление и удаление пользователя */
 
     public static synchronized boolean addUser(User user) {
-        if (!users.containsKey(user.getIDNumber())) {
+        if (!users.containsKey(user.getIDNumber()) && !isNameLoginExist(user.getNameLogin())) {
             users.put(user.getIDNumber(), user);
             return true;
         }

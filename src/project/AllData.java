@@ -113,12 +113,13 @@ public class AllData {
 
     public synchronized static boolean deleteProject(int deadProject) {
         if (isProjectExist(deadProject)) {
+            int deleteWorkTime = allProjects.get(deadProject).getWorkSum();
             allProjects.remove(deadProject);
             activeProjects.remove(deadProject);
 
             // Удаляем время из общего суммарного
             int tmp = workSumProjects.get();
-            tmp -= allProjects.get(deadProject).getWorkSum();
+            tmp -= deleteWorkTime;
             if (tmp < 0) {
                 tmp = 0;
             }

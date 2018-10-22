@@ -3,6 +3,7 @@ import project.AllDataWrapper;
 import project.Project;
 import project.WorkTime;
 import test.SaveLoadTest;
+import test.ThreadsTest;
 import threads.ParallelExecutor;
 import threads.ThreadCreateProject;
 import threads.ThreadCreateUser;
@@ -161,8 +162,11 @@ public class Main {
         }*/
 
 
-        SaveLoadTest saveLoadTest = new SaveLoadTest();
-        saveLoadTest.saveTest();
+        /*SaveLoadTest saveLoadTest = new SaveLoadTest();
+        saveLoadTest.saveTest();*/
+
+        ThreadsTest threadsTest = new ThreadsTest();
+        threadsTest.threadsTest();
 
 
 

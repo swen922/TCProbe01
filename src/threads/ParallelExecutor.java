@@ -7,7 +7,7 @@ import java.util.concurrent.Executors;
 
 public class ParallelExecutor {
 
-    public ParallelExecutor() {
+    private ParallelExecutor() {
     }
 
     private static ExecutorService service = Executors.newFixedThreadPool(3);

@@ -1,13 +1,10 @@
 package threads;
 
-import user.Designer;
-import user.Manager;
-import user.Role;
-import user.User;
+import user.*;
 
 import java.util.concurrent.Callable;
 
-public class ThreadCreateUser implements Callable<User> {
+public class ThreadCreateUser implements Callable<Boolean> {
 
     private String nameLogin;
     private Role role;
@@ -26,14 +23,14 @@ public class ThreadCreateUser implements Callable<User> {
     }
 
     @Override
-    public User call() throws Exception {
-        User result = null;
+    public Boolean call() throws Exception {
+        User user = null;
         if (role.equals(Role.DESIGNER)) {
-            result = new Designer(nameLogin);
+            user = new Designer(nameLogin);
         }
         else if (role.equals(Role.MANAGER)) {
-            result = new Manager(nameLogin);
+            user = new Manager(nameLogin);
         }
-        return result;
+        return AllUsers.addUser(user);
     }
 }
