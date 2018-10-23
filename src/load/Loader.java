@@ -75,6 +75,11 @@ public class Loader {
                 users.putAll(allDataWrapper.getManagers());
                 AllUsers.setUsers(users);
 
+                Map<Integer, User> deletedUsers = new HashMap<>();
+                deletedUsers.putAll(allDataWrapper.getDeletedDesigners());
+                deletedUsers.putAll(allDataWrapper.getDeletedManagers());
+                AllUsers.setDeletedUsers(deletedUsers);
+
                 AllData.setIdNumber(allDataWrapper.getAllProjectsIdNumber());
                 AllData.setAllProjects(allDataWrapper.getAllProjects());
                 AllData.setWorkSumProjects(allDataWrapper.getWorkSumProjects());

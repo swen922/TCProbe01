@@ -130,26 +130,21 @@ public class AllData {
         return false;
     }
 
-    public static boolean setProjectArchive(int moveToArchiveProject) {
-        if (isProjectExist(moveToArchiveProject)) {
-            Project project = allProjects.get(moveToArchiveProject);
-            project.setArchive(true);
-            activeProjects.remove(moveToArchiveProject);
+    public static boolean changeProjectArchiveStatus(int changedProject, boolean projectIsArchive) {
+        if (isProjectExist(changedProject)) {
+            Project chProject = allProjects.get(changedProject);
+            chProject.setArchive(projectIsArchive);
+
+            if (projectIsArchive) {
+                activeProjects.remove(changedProject);
+            }
+            else if (!projectIsArchive) {
+                activeProjects.put(changedProject, chProject);
+            }
             return true;
         }
         return false;
     }
-
-    public static boolean setProjectActive(int moveToActiveProject) {
-        if (isProjectExist(moveToActiveProject)) {
-            Project project = allProjects.get(moveToActiveProject);
-            project.setArchive(false);
-            activeProjects.put(project.getIdNumber(), project);
-            return true;
-        }
-        return false;
-    }
-
 
 
     /** Методы проверки существования проекта в списке

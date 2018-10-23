@@ -13,6 +13,10 @@ public class AllUsers {
 
     private static Map<Integer, User> users = new ConcurrentHashMap<>();
 
+    // Заводим отдельный список для удаленных пользователей, чтобы иметь возможность
+    // подставлять вместо них обозначение "пользователь удален" в подборках статистики
+    private static Map<Integer, User> deletedUsers = new ConcurrentHashMap<>();
+
 
 
     /** Стандартные геттеры и сеттеры */
@@ -37,7 +41,13 @@ public class AllUsers {
         AllUsers.users = users;
     }
 
+    public static Map<Integer, User> getDeletedUsers() {
+        return deletedUsers;
+    }
 
+    public static synchronized void setDeletedUsers(Map<Integer, User> deletedUsers) {
+        AllUsers.deletedUsers = deletedUsers;
+    }
 
     /** Геттеры отдельных юзеров из мапы
      * @return null
@@ -61,6 +71,13 @@ public class AllUsers {
         return null;
     }
 
+    public static User getOneDeletedUser(int deletedUser) {
+        if (deletedUsers.containsKey(deletedUser)) {
+            return deletedUsers.get(deletedUser);
+        }
+        return null;
+    }
+
 
 
     /** Добавление и удаление пользователя */
@@ -75,7 +92,17 @@ public class AllUsers {
 
     public static synchronized boolean deleteUser(int idUser) {
         if (isUserExist(idUser)) {
+            deletedUsers.put(idUser, users.get(idUser));
             users.remove(idUser);
+            return true;
+        }
+        return false;
+    }
+
+    public static synchronized boolean resurrectUser(int idUser) {
+        if (isUserDeleted(idUser)) {
+            users.put(idUser, deletedUsers.get(idUser));
+            deletedUsers.remove(idUser);
             return true;
         }
         return false;
@@ -107,6 +134,13 @@ public class AllUsers {
         }
 
         return false;
+    }
+
+    public static boolean isUserDeleted(int idNumber) {
+        if (idNumber <= 0 || idNumber > getIDCounterAllUsers()) {
+            return false;
+        }
+        return deletedUsers.containsKey(idNumber);
     }
 
 }

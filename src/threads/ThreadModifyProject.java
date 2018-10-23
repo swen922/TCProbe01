@@ -19,7 +19,6 @@ public class ThreadModifyProject implements Callable<Boolean> {
     private String newInitiator;
     private String newDescription;
     private String newDateCreationString;
-    private Boolean newisArchive;
     private String newComment;
     private Set<Integer> newLinkedProjects;
     private Integer newPONumber;
@@ -30,7 +29,6 @@ public class ThreadModifyProject implements Callable<Boolean> {
         this.newInitiator = newInitiator;
         this.newDescription = newDescription;
         this.newDateCreationString = newDateCreationString;
-        this.newisArchive = newisArchive;
         this.newComment = newComment;
         this.newLinkedProjects = newLinkedProjects;
         this.newPONumber = newPONumber;
@@ -54,10 +52,6 @@ public class ThreadModifyProject implements Callable<Boolean> {
         }
         if (this.newDateCreationString != null) {
             project.setDateCreationString(newDateCreationString);
-            result = true;
-        }
-        if (this.newisArchive != null) {
-            project.setArchive(newisArchive.booleanValue());
             result = true;
         }
         if (this.newComment != null) {

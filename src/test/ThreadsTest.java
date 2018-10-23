@@ -9,6 +9,7 @@ import user.AllUsers;
 import user.Role;
 import user.User;
 
+import java.sql.SQLOutput;
 import java.time.LocalDate;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
@@ -104,6 +105,8 @@ public class ThreadsTest {
 
         System.out.println(AllUsers.getOneUser(3));
         System.out.println("user id 3 exist = " + AllUsers.isUserExist(3));
+        System.out.println("user id 3 deleted = " + AllUsers.isUserDeleted(3));
+        System.out.println(AllUsers.getDeletedUsers().containsKey(3));
         try {
             Assert.assertTrue(AllUsers.isUserExist(3));
             ThreadDeleteUser threadDeleteUser = new ThreadDeleteUser(3);
@@ -116,6 +119,9 @@ public class ThreadsTest {
             e.printStackTrace();
         }
         System.out.println("user id 3 exist = " + AllUsers.isUserExist(3));
+        System.out.println("user id 3 deleted = " + AllUsers.isUserDeleted(3));
+        System.out.println(AllUsers.getDeletedUsers().containsKey(3));
+        System.out.println("");
 
 
 
@@ -134,6 +140,38 @@ public class ThreadsTest {
         }
         System.out.println("project id-20 exist = " + AllData.isProjectExist(20));
         System.out.println("");
+
+
+
+        System.out.println("id-77 is Archive = " + AllData.isProjectArchive(77));
+        System.out.println("AllData.activeProjects contain id-77 = " + AllData.getActiveProjects().containsKey(77));
+
+        ThreadSetArchive threadSetArchive = new ThreadSetArchive(77,true);
+        Future<Boolean> tsa = ParallelExecutor.getService().submit(threadSetArchive);
+        try {
+            tsa.get();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        }
+
+        System.out.println("id-77 is Archive = " + AllData.isProjectArchive(77));
+        System.out.println("AllData.activeProjects contain id-77 = " + AllData.getActiveProjects().containsKey(77));
+
+        ThreadSetArchive threadSetArchive2 = new ThreadSetArchive(77,false);
+        Future<Boolean> tsa2 = ParallelExecutor.getService().submit(threadSetArchive2);
+        try {
+            tsa2.get();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        }
+
+        System.out.println("id-77 is Archive = " + AllData.isProjectArchive(77));
+        System.out.println("AllData.activeProjects contain id-77 = " + AllData.getActiveProjects().containsKey(77));
+
 
         ParallelExecutor.getService().shutdown();
 

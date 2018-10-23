@@ -8,6 +8,14 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
+
+/** Специальный класс-обертка для всех данных,
+ * чтобы сохранить их в XML-файл.
+ * Используется классом Loader для сохранения и чтения сохраненных данных
+ *
+ * Поскольку JAXB не поддерживает сохранение интерфейсов,
+ * сохраняем юзеров в индивидуальные списки согласно классам-имплементаторам */
+
 @XmlRootElement(name = "alldatawrapper")
 public class AllDataWrapper {
 
@@ -20,6 +28,8 @@ public class AllDataWrapper {
     private int IDCounterAllUsers;
     private Map<Integer, Designer> designers = new HashMap<>();
     private Map<Integer, Manager> managers = new HashMap<>();
+    private Map<Integer, Designer> deletedDesigners = new HashMap<>();
+    private Map<Integer, Manager> deletedManagers = new HashMap<>();
     //private Map<Integer, User> users = new HashMap<>();
 
 
@@ -40,6 +50,18 @@ public class AllDataWrapper {
             else if (u.getRole().equals(Role.MANAGER)) {
                 Manager man = (Manager) u;
                 this.managers.put(man.getIDNumber(), man);
+            }
+        }
+
+        Collection<? extends User> collDeletedUsers = AllUsers.getDeletedUsers().values();
+        for (User u : collDeletedUsers) {
+            if (u.getRole().equals(Role.DESIGNER)) {
+                Designer des = (Designer) u;
+                this.deletedDesigners.put(des.getIDNumber(), des);
+            }
+            else if (u.getRole().equals(Role.MANAGER)) {
+                Manager man = (Manager) u;
+                this.deletedManagers.put(man.getIDNumber(), man);
             }
         }
     }
@@ -80,7 +102,7 @@ public class AllDataWrapper {
         this.IDCounterAllUsers = newIDCounterAllUsers;
     }
 
-    @XmlElement(name = "usersdesigners")
+    @XmlElement(name = "designers")
     public Map<Integer, Designer> getDesigners() {
         return designers;
     }
@@ -89,7 +111,7 @@ public class AllDataWrapper {
         this.designers = newdesigners;
     }
 
-    @XmlElement(name = "usersmanagers")
+    @XmlElement(name = "managers")
     public Map<Integer, Manager> getManagers() {
         return managers;
     }
@@ -98,24 +120,35 @@ public class AllDataWrapper {
         this.managers = newmanagers;
     }
 
-    /*@XmlElement(name = "allusers")
-    public Map<Integer, User> getUsers() {
-        return users;
+    @XmlElement(name = "deleteddesigners")
+    public Map<Integer, Designer> getDeletedDesigners() {
+        return deletedDesigners;
     }
 
-    public void setUsers(Map<Integer, User> newusers) {
-        this.users = newusers;
-    }*/
+    public void setDeletedDesigners(Map<Integer, Designer> deletedDesigners) {
+        this.deletedDesigners = deletedDesigners;
+    }
+
+    @XmlElement(name = "deletedmanagers")
+    public Map<Integer, Manager> getDeletedManagers() {
+        return deletedManagers;
+    }
+
+    public void setDeletedManagers(Map<Integer, Manager> deletedManagers) {
+        this.deletedManagers = deletedManagers;
+    }
 
     @Override
     public String toString() {
         return "AllDataWrapper{" + "\n" +
-                "projectIdNumber=" + allProjectsIdNumber + "\n" +
+                "allProjectsIdNumber=" + allProjectsIdNumber + "\n" +
                 ", allProjects=" + allProjects + "\n" +
                 ", workSumProjects=" + workSumProjects + "\n" +
                 ", IDCounterAllUsers=" + IDCounterAllUsers + "\n" +
                 ", designers=" + designers + "\n" +
                 ", managers=" + managers + "\n" +
+                ", deletedDesigners=" + deletedDesigners + "\n" +
+                ", deletedManagers=" + deletedManagers + "\n" +
                 '}' + "\n";
     }
 }

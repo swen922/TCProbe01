@@ -21,6 +21,8 @@ public class SaveLoadTest {
         Generator.generate();
 
         AllUsers.getOneUser(12).setFullName("");
+        AllUsers.deleteUser(3);
+        System.out.println("deleted user id-3");
 
         Loader loader = new Loader();
         System.out.println(loader.save());
@@ -59,6 +61,7 @@ public class SaveLoadTest {
         Assert.assertEquals(usersIDs, AllUsers.getIDCounterAllUsers());
         Assert.assertEquals(users.get(9), AllUsers.getOneUser(9));
         Assert.assertEquals(allProjects.get(35), AllData.getAnyProject(35));
+        Assert.assertTrue(AllUsers.isUserDeleted(3));
 
         System.out.println(AllUsers.getOneUser("manager-2"));
 
@@ -66,6 +69,8 @@ public class SaveLoadTest {
         System.out.println(allProjects.get(21));
         System.out.println(AllData.getAnyProject(21));
         System.out.println(AllUsers.getOneUser(12).getFullName().isEmpty());
+
+        System.out.println("user id-3 is deleted = " + AllUsers.isUserDeleted(3));
 
 
     }
